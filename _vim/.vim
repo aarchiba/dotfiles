@@ -1,1 +1,1 @@
-/home/sontek/code/dotfiles/_vim
+/home/peridot/software/dotfiles/_vim
