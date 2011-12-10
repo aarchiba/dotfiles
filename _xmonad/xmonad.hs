@@ -4,12 +4,14 @@ import qualified XMonad.StackSet as W
 import XMonad.Hooks.ManageDocks
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeysP)
+import XMonad.Util.Scratchpad
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spiral
 import XMonad.Layout.Tabbed
+import XMonad.Actions.WindowBringer
 import System.IO
 
-myTerminal = "xfce4-terminal"
+myTerminal = "urxvt"
 myManageHook = composeAll
     [ className =? "Gimp"      --> doFloat
     , className =? "Vncviewer" --> doFloat
@@ -24,7 +26,10 @@ myLayouts = (smartBorders $ avoidStruts $
 main = do
     xmproc <- spawnPipe "/usr/bin/xmobar /home/peridot/.xmobarrc"
     xmonad $ defaultConfig
-        { manageHook = manageDocks <+> myManageHook <+> manageHook defaultConfig
+        { manageHook = scratchpadManageHookDefault 
+                   <+> manageDocks 
+                   <+> myManageHook 
+                   <+> manageHook defaultConfig
         , layoutHook = myLayouts
         , logHook = dynamicLogWithPP xmobarPP
             { ppOutput = hPutStrLn xmproc
@@ -38,5 +43,8 @@ main = do
         , ("<XF86Calculator>", windows $ W.greedyView "1")
         , ("<XF86HomePage>", windows $ W.greedyView "2")
         , ("<XF86Mail>", windows $ W.greedyView "3")
+        , ("M-`", scratchpadSpawnActionTerminal "urxvt")
+        , ("M-g", gotoMenu)
+        , ("M-b", bringMenu)
         , ("M4-l", spawn "xscreensaver-command -lock")
         ]
